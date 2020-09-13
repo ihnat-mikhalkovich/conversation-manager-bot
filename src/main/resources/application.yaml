@@ -1,0 +1,14 @@
+telegram:
+  bot:
+    username: ${TELEGRAN_BOT_USERMANE:default-username}
+    token: ${TELEGRAN_BOT_TOKEN:default-token}
+    path: ${TELEGRAN_BOT_PATH:default-path}
+
+logging:
+  level:
+    org.springframework: ERROR
+    com.conversation.manamger.bot: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
+    file: "%d %p %c{1.} [%t] %m%n"
+  file: app.log

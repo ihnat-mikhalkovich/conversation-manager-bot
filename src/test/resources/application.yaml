@@ -1,0 +1,5 @@
+telegram:
+  bot:
+    username: the_bot_name
+    token: the_bot_token
+    path: the_bot_path
