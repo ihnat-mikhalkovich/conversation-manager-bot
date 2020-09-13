@@ -10,7 +10,6 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Objects;
 
@@ -40,12 +39,7 @@ public class TelegramBotService extends TelegramWebhookBot {
             final String text = update.getMessage().getText();
             log.info("I got the message: {}", text);
             final Long chatId = message.getChatId();
-            try {
-                execute(new SendMessage(chatId, "Hi "+ text));
-            } catch (TelegramApiException e) {
-                log.error("I got error in execute.");
-                e.printStackTrace();
-            }
+            return new SendMessage(chatId, "Hi " + text);
         }
 
         return null;
