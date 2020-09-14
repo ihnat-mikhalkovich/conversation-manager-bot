@@ -26,10 +26,12 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 
-	compile group: 'org.telegram', name: 'telegrambots-spring-boot-starter', version: '4.4.0.2'
+	implementation group: 'org.telegram', name: 'telegrambots-spring-boot-starter', version: '4.4.0.2'
 
-	compile 'io.springfox:springfox-boot-starter:3.0.0'
-	compile 'io.springfox:springfox-swagger-ui:2.9.2'
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+
+	testImplementation group: 'org.awaitility', name: 'awaitility', version: '3.1.6'
 }
 
 test {
