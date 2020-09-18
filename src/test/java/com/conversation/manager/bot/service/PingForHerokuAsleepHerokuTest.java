@@ -67,7 +67,10 @@ public class PingForHerokuAsleepHerokuTest {
         }
     }
 
-    @SpringBootTest(properties = "CLOUD_PLATFORM=heroku")
+    @SpringBootTest(properties = {
+            "CLOUD_PLATFORM=heroku",
+            "cloud.heroku.ping-google-cron=* * * ? * *"
+    })
     public static class InHeroku {
 
         @Autowired
