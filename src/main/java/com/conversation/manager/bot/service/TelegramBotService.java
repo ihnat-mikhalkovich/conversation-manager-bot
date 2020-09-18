@@ -1,6 +1,11 @@
 package com.conversation.manager.bot.service;
 
+import com.conversation.manager.bot.telegram.command.BotCommand;
+import com.conversation.manager.bot.telegram.command.BotCommandDirector;
+import com.conversation.manager.bot.telegram.command.BotCommandType;
+import com.conversation.manager.bot.telegram.command.recognizer.CommandRecognizer;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,15 +13,13 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
-import java.util.Objects;
 
 @Service
 @Getter
 @Setter
 @Slf4j
+@RequiredArgsConstructor
 public class TelegramBotService extends TelegramWebhookBot {
 
     @Value("${telegram.bot.token}")
@@ -28,20 +31,14 @@ public class TelegramBotService extends TelegramWebhookBot {
     @Value("${telegram.bot.path}")
     private String botPath;
 
+    private final BotCommandDirector botCommandDirector;
+
+    private final CommandRecognizer commandRecognizer;
+
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
-        final Message message = update.getMessage();
-        if (Objects.isNull(message)) {
-            return null;
-        }
-
-        if (message.hasText()) {
-            final String text = update.getMessage().getText();
-            log.info("I got the message: {}", text);
-            final Long chatId = message.getChatId();
-            return new SendMessage(chatId, "Hi " + text);
-        }
-
-        return null;
+        final BotCommandType commandType = commandRecognizer.recognize(update);
+        final BotCommand command = botCommandDirector.getCommand(commandType);
+        return command.execute(update);
     }
 }
