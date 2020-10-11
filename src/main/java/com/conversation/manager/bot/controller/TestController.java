@@ -1,10 +1,11 @@
 package com.conversation.manager.bot.controller;
 
-import com.conversation.manager.bot.entity.Chat;
+import com.conversation.manager.bot.entity.Group;
 import com.conversation.manager.bot.entity.User;
 import com.conversation.manager.bot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,9 +32,10 @@ public class TestController {
     }
 
     @GetMapping("/getUserChats")
-    public ResponseEntity<Set<Chat>> getUserChats() {
+    @Transactional
+    public ResponseEntity<Set<Group>> getUserChats() {
         final List<User> all = userRepository.findAll();
         final User next = all.iterator().next();
-        return ResponseEntity.ok(next.getChats());
+        return ResponseEntity.ok(next.getGroups());
     }
 }

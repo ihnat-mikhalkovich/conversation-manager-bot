@@ -1,10 +1,9 @@
 package com.conversation.manager.bot.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -12,19 +11,22 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(exclude = "groups")
+@ToString(exclude = "groups")
 public class User {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    @Column(name = "user_id")
+    private Integer userId;
 
-    @Column(name = "telegram_username")
-    private String username;
+    @Column(name = "hash_key")
+    private String hashKey;
 
-    @Column(name = "hashed_key")
-    private String hashedKey;
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "userId")
-//    @JoinColumn(name = "chat_id")
-    private Set<Chat> chats;
+    @ManyToMany
+    @JoinTable(name = "user_group",
+            joinColumns =
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns =
+            @JoinColumn(name = "group_id", referencedColumnName = "group_id"))
+    private Set<Group> groups = new HashSet<>();
 }

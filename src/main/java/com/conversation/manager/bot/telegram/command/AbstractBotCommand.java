@@ -1,19 +1,35 @@
 package com.conversation.manager.bot.telegram.command;
 
+import com.conversation.manager.bot.repository.GroupRepository;
+import com.conversation.manager.bot.repository.UserRepository;
+import com.conversation.manager.bot.util.key.KeyPartRecognizer;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.bots.AbsSender;
 
 @Getter
 public abstract class AbstractBotCommand implements BotCommand {
 
-    protected AbsSender sender;
+    protected GroupRepository groupRepository;
+
+    protected UserRepository userRepository;
+
+    protected KeyPartRecognizer keyPartRecognizer;
 
     @Autowired
-    public void setAbsSender(AbsSender absSender) {
-        this.sender = absSender;
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setGroupRepository(GroupRepository groupRepository) {
+        this.groupRepository = groupRepository;
+    }
+
+    @Autowired
+    public void setKeyPartRecognizer(KeyPartRecognizer keyPartRecognizer) {
+        this.keyPartRecognizer = keyPartRecognizer;
     }
 
     @Override

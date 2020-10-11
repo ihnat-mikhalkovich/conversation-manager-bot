@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Service
@@ -22,18 +21,14 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @RequiredArgsConstructor
 public class TelegramBotService extends TelegramWebhookBot {
 
+    private final BotCommandDirector botCommandDirector;
+    private final CommandRecognizer commandRecognizer;
     @Value("${telegram.bot.token}")
     private String botToken;
-
     @Value("${telegram.bot.username}")
     private String botUsername;
-
     @Value("${telegram.bot.path}")
     private String botPath;
-
-    private final BotCommandDirector botCommandDirector;
-
-    private final CommandRecognizer commandRecognizer;
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {

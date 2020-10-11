@@ -35,7 +35,9 @@ dependencies {
 	testImplementation group: 'org.awaitility', name: 'awaitility', version: '3.1.6'
 
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	runtime("com.h2database:h2")
+	testImplementation("com.h2database:h2")
+
+	implementation group: 'org.postgresql', name: 'postgresql'
 }
 
 test {

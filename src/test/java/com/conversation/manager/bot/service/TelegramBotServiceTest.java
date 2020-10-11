@@ -1,16 +1,26 @@
 package com.conversation.manager.bot.service;
 
+import com.conversation.manager.bot.entity.Group;
+import com.conversation.manager.bot.service.prepare.PrepareRequestService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.function.SupplierUtils;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -25,6 +35,12 @@ public class TelegramBotServiceTest {
     @Mock
     private Message message;
 
+    @MockBean
+    private PrepareRequestService prepareRequestService;
+
+    @Mock
+    private org.telegram.telegrambots.meta.api.objects.User from;
+
     @Test
     public void fieldSetCorrectly() {
         assertEquals("the_bot_name", telegramWebhookBot.getBotUsername());
@@ -35,7 +51,10 @@ public class TelegramBotServiceTest {
     @BeforeEach
     public void setUpUpdate() {
         when(update.getMessage()).thenReturn(message);
+        when(update.getMessage().getFrom()).thenReturn(from);
         when(update.hasMessage()).thenReturn(true);
+
+        when(update.getMessage().getFrom().getId()).thenReturn(1);
         when(message.getChatId()).thenReturn(1L);
         when(message.hasText()).thenReturn(true);
     }
@@ -91,13 +110,30 @@ public class TelegramBotServiceTest {
     }
 
     @Test
+    @Transactional
     public void invite() {
         when(message.getText()).thenReturn("/invite");
-        when(message.getChatId()).thenReturn(7L);
+        when(message.getChatId()).thenReturn(1101L);
+        final Set<Group> groups = new HashSet<>();
+        groups.add(SupplierUtils.resolve(() -> {
+            final Group group = new Group();
+            group.setGroupId(201L);
+            return group;
+        }));
+        final Set<Chat> chats = new HashSet<>();
+        chats.add(SupplierUtils.resolve(() -> {
+            final Chat chat = mock(Chat.class);
+            when(chat.getTitle()).thenReturn("Test chat 1");
+            when(chat.getInviteLink()).thenReturn("https://t.me/test-chat-1");
+            when(chat.getId()).thenReturn(201L);
+            return chat;
+        }));
+        when(prepareRequestService.findChats(groups)).thenReturn(chats);
+        when(prepareRequestService.unban(201L, 1101)).thenReturn(true);
         final SendMessage sendMessage = (SendMessage) telegramWebhookBot.onWebhookUpdateReceived(update);
         final String text = sendMessage.getText();
-        assertEquals("You invited to 'aaa', 'bbb", text);
-        assertEquals("7", sendMessage.getChatId());
+        assertEquals("Invite links: <a href=\"https://t.me/test-chat-1\">Test chat 1</a>.", text);
+        assertEquals("1101", sendMessage.getChatId());
     }
 
     /*

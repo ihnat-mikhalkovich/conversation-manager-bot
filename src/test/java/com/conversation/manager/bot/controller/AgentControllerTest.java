@@ -32,8 +32,8 @@ public class AgentControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private TelegramWebhookBot telegramWebhookBot;
+//    @MockBean
+//    private TelegramWebhookBot telegramWebhookBot;
 
     @Test
     public void testUri() throws Exception {

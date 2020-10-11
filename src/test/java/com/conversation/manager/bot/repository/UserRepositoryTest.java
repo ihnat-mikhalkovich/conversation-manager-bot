@@ -19,7 +19,7 @@ public class UserRepositoryTest {
     @Test
     @Transactional
     public void testGetById() {
-        final Optional<User> byId = userRepository.findById(1L);
+        final Optional<User> byId = userRepository.findById(702696623);
         System.out.println("one: " + byId.get());
     }
 

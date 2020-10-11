@@ -3,7 +3,9 @@ package com.conversation.manager.bot.telegram.command.recognizer;
 import com.conversation.manager.bot.telegram.command.BotCommandType;
 import com.conversation.manager.bot.telegram.command.extractor.impl.CommandPartExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 
 import java.util.Arrays;
 import java.util.Optional;

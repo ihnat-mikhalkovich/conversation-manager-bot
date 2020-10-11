@@ -6,5 +6,6 @@ public enum BotCommandType {
     REMOVE,
     INVITE,
     UNRECOGNIZED,
-    NO_COMMAND
+    NO_COMMAND,
+    BOT_ADDED_TO_GROUP
 }

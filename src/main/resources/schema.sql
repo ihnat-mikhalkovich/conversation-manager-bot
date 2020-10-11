@@ -1,15 +1,16 @@
-DROP TABLE IF EXISTS TELEGRAM_CHAT;
-DROP TABLE IF EXISTS TELEGRAM_USER;
+DROP TABLE IF EXISTS telegram_group;
+DROP TABLE IF EXISTS telegram_user;
+DROP TABLE IF EXISTS user_group;
 
-CREATE TABLE TELEGRAM_USER (
-  id IDENTITY  PRIMARY KEY,
-  telegram_username VARCHAR(32) NOT NULL,
-  hashed_key VARCHAR(33) NOT NULL
+CREATE TABLE telegram_user (
+  user_id int PRIMARY KEY,
+  hash_key VARCHAR(33) NOT NULL
 );
-
-CREATE TABLE TELEGRAM_CHAT (
-  id IDENTITY PRIMARY KEY,
-  user_id BIGINT NOT NULL,
-  chat_id BIGINT NOT NULL,
-  CONSTRAINT chats_fk_1 FOREIGN KEY (user_id) REFERENCES TELEGRAM_USER (id)
+CREATE TABLE telegram_group (
+  group_id bigint PRIMARY KEY
+);
+CREATE TABLE user_group (
+  user_id int not null,
+  group_id bigint not null,
+  CONSTRAINT user_group_pkey PRIMARY KEY (user_id, group_id) -- explicit pk
 );
