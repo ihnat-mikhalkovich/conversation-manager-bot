@@ -3,7 +3,7 @@ package com.conversation.manager.bot.telegram.command.impl;
 import com.conversation.manager.bot.entity.Group;
 import com.conversation.manager.bot.entity.User;
 import com.conversation.manager.bot.repository.UserRepository;
-import com.conversation.manager.bot.service.prepare.PrepareRequestService;
+import com.conversation.manager.bot.service.prepare.PreparedRequestService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -44,7 +44,7 @@ public class InviteCommandTest {
     private UserRepository userRepository;
 
     @MockBean
-    private PrepareRequestService prepareRequestService;
+    private PreparedRequestService preparedRequestService;
 
     @BeforeEach
     public void setupUpdate() {
@@ -77,8 +77,8 @@ public class InviteCommandTest {
             when(chat.getId()).thenReturn(201L);
             return chat;
         }));
-        when(prepareRequestService.findChats(groups)).thenReturn(chats);
-        when(prepareRequestService.unban(201L, 1101)).thenReturn(true);
+        when(preparedRequestService.findChats(groups)).thenReturn(chats);
+        when(preparedRequestService.unban(201L, 1101)).thenReturn(true);
 
         final SendMessage sendMessage = (SendMessage) inviteCommand.execute(update);
         final String text = sendMessage.getText();
@@ -136,9 +136,9 @@ public class InviteCommandTest {
             when(chat.getId()).thenReturn(202L);
             return chat;
         }));
-        when(prepareRequestService.findChats(groups)).thenReturn(chats);
-        when(prepareRequestService.unban(201L, 1102)).thenReturn(true);
-        when(prepareRequestService.unban(202L, 1102)).thenReturn(true);
+        when(preparedRequestService.findChats(groups)).thenReturn(chats);
+        when(preparedRequestService.unban(201L, 1102)).thenReturn(true);
+        when(preparedRequestService.unban(202L, 1102)).thenReturn(true);
 
         final SendMessage sendMessage = (SendMessage) inviteCommand.execute(update);
         final String text = sendMessage.getText();
@@ -170,8 +170,8 @@ public class InviteCommandTest {
             when(chat.getId()).thenReturn(201L);
             return chat;
         }));
-        when(prepareRequestService.findChats(groups)).thenReturn(chats);
-        when(prepareRequestService.unban(201L, 1101)).thenReturn(false);
+        when(preparedRequestService.findChats(groups)).thenReturn(chats);
+        when(preparedRequestService.unban(201L, 1101)).thenReturn(false);
 
         final SendMessage sendMessage = (SendMessage) inviteCommand.execute(update);
         final String text = sendMessage.getText();
@@ -213,9 +213,9 @@ public class InviteCommandTest {
             when(chat.getId()).thenReturn(202L);
             return chat;
         }));
-        when(prepareRequestService.findChats(groups)).thenReturn(chats);
-        when(prepareRequestService.unban(201L, 1102)).thenReturn(false);
-        when(prepareRequestService.unban(202L, 1102)).thenReturn(true);
+        when(preparedRequestService.findChats(groups)).thenReturn(chats);
+        when(preparedRequestService.unban(201L, 1102)).thenReturn(false);
+        when(preparedRequestService.unban(202L, 1102)).thenReturn(true);
 
         final SendMessage sendMessage = (SendMessage) inviteCommand.execute(update);
         final String text = sendMessage.getText();

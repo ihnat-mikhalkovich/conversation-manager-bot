@@ -1,7 +1,7 @@
 package com.conversation.manager.bot.telegram.command.impl;
 
 import com.conversation.manager.bot.entity.User;
-import com.conversation.manager.bot.service.prepare.PrepareRequestService;
+import com.conversation.manager.bot.service.prepare.PreparedRequestService;
 import com.conversation.manager.bot.telegram.command.AbstractBotCommand;
 import com.conversation.manager.bot.telegram.command.BotCommandType;
 import lombok.Getter;
@@ -15,11 +15,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Getter
 public class RemoveCommand extends AbstractBotCommand {
 
-    protected PrepareRequestService prepareRequestService;
+    protected PreparedRequestService preparedRequestService;
 
     @Autowired
-    public void setPrepareRequestService(PrepareRequestService prepareRequestService) {
-        this.prepareRequestService = prepareRequestService;
+    public void setPreparedRequestService(PreparedRequestService preparedRequestService) {
+        this.preparedRequestService = preparedRequestService;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class RemoveCommand extends AbstractBotCommand {
         final User user = new User();
         user.setUserId(userId);
         user.setHashKey(keyPartRecognizer.recognize(update));
-        user.getGroups().addAll(prepareRequestService.findGroupsByUserId(userId));
+        user.getGroups().addAll(preparedRequestService.findGroupsByUserId(userId));
 
         userRepository.saveAndFlush(user);
 

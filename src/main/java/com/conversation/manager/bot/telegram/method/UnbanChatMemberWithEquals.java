@@ -14,8 +14,13 @@ public class UnbanChatMemberWithEquals extends UnbanChatMember {
             return false;
         if (getClass() != o.getClass())
             return false;
-        UnbanChatMember unbanChatMember = (UnbanChatMember) o;
+        final UnbanChatMember unbanChatMember = (UnbanChatMember) o;
         return Objects.equals(this.getUserId(), unbanChatMember.getUserId())
                 && Objects.equals(this.getChatId(), unbanChatMember.getChatId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getChatId(), this.getUserId());
     }
 }

@@ -1,7 +1,6 @@
 package com.conversation.manager.bot.telegram.method;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import lombok.EqualsAndHashCode;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.objects.ApiResponse;
 import org.telegram.telegrambots.meta.api.objects.ChatMember;
@@ -35,8 +34,13 @@ public class SaveGetChatMember extends GetChatMember {
             return false;
         if (getClass() != o.getClass())
             return false;
-        SaveGetChatMember saveGetChatMember = (SaveGetChatMember) o;
+        final SaveGetChatMember saveGetChatMember = (SaveGetChatMember) o;
         return Objects.equals(this.getUserId(), saveGetChatMember.getUserId())
                 && Objects.equals(this.getChatId(), saveGetChatMember.getChatId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getChatId(), this.getUserId());
     }
 }

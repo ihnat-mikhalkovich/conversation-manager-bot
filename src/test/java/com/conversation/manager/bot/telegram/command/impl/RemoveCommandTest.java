@@ -3,7 +3,7 @@ package com.conversation.manager.bot.telegram.command.impl;
 import com.conversation.manager.bot.entity.Group;
 import com.conversation.manager.bot.entity.User;
 import com.conversation.manager.bot.repository.UserRepository;
-import com.conversation.manager.bot.service.prepare.PrepareRequestService;
+import com.conversation.manager.bot.service.prepare.PreparedRequestService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -40,7 +40,7 @@ public class RemoveCommandTest {
     private org.telegram.telegrambots.meta.api.objects.User from;
 
     @MockBean
-    private PrepareRequestService prepareRequestService;
+    private PreparedRequestService preparedRequestService;
 
     @Autowired
     private UserRepository userRepository;
@@ -71,7 +71,7 @@ public class RemoveCommandTest {
             group.setGroupId(201L);
             return group;
         }));
-        when(prepareRequestService.findGroupsByUserId(101)).thenReturn(groups);
+        when(preparedRequestService.findGroupsByUserId(101)).thenReturn(groups);
 
         when(update.getMessage().getFrom().getId()).thenReturn(101);
         when(message.getChatId()).thenReturn(101L);
@@ -110,7 +110,7 @@ public class RemoveCommandTest {
             group.setGroupId(202L);
             return group;
         }));
-        when(prepareRequestService.findGroupsByUserId(102)).thenReturn(groups);
+        when(preparedRequestService.findGroupsByUserId(102)).thenReturn(groups);
 
         when(update.getMessage().getFrom().getId()).thenReturn(102);
         when(message.getChatId()).thenReturn(102L);

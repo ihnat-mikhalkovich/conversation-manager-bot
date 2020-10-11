@@ -1,7 +1,6 @@
 package com.conversation.manager.bot.telegram.command.impl;
 
 import com.conversation.manager.bot.telegram.command.AbstractBotCommand;
-import com.conversation.manager.bot.telegram.command.BotCommand;
 import com.conversation.manager.bot.telegram.command.BotCommandType;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

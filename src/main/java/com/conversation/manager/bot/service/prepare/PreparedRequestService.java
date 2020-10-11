@@ -7,21 +7,21 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public interface PrepareRequestService {
+public interface PreparedRequestService {
 
     default Set<Chat> findChats(Set<Group> groups) {
         return groups.stream()
-                .map(this::findChat)
+                .map(this::findChats)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
     }
 
-    default Optional<Chat> findChat(Group group) {
-        return this.findChat(group.getGroupId());
+    default Optional<Chat> findChats(Group group) {
+        return this.findChats(group.getGroupId());
     }
 
-    Optional<Chat> findChat(Long groupId);
+    Optional<Chat> findChats(Long groupId);
 
     Set<Group> findGroupsByUserId(Integer userId);
 

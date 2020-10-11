@@ -1,7 +1,7 @@
 package com.conversation.manager.bot.service;
 
 import com.conversation.manager.bot.entity.Group;
-import com.conversation.manager.bot.service.prepare.PrepareRequestService;
+import com.conversation.manager.bot.service.prepare.PreparedRequestService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -36,7 +36,7 @@ public class TelegramBotServiceTest {
     private Message message;
 
     @MockBean
-    private PrepareRequestService prepareRequestService;
+    private PreparedRequestService preparedRequestService;
 
     @Mock
     private org.telegram.telegrambots.meta.api.objects.User from;
@@ -128,8 +128,8 @@ public class TelegramBotServiceTest {
             when(chat.getId()).thenReturn(201L);
             return chat;
         }));
-        when(prepareRequestService.findChats(groups)).thenReturn(chats);
-        when(prepareRequestService.unban(201L, 1101)).thenReturn(true);
+        when(preparedRequestService.findChats(groups)).thenReturn(chats);
+        when(preparedRequestService.unban(201L, 1101)).thenReturn(true);
         final SendMessage sendMessage = (SendMessage) telegramWebhookBot.onWebhookUpdateReceived(update);
         final String text = sendMessage.getText();
         assertEquals("Invite links: <a href=\"https://t.me/test-chat-1\">Test chat 1</a>.", text);

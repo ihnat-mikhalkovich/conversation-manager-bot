@@ -7,6 +7,11 @@ import java.util.Objects;
 public class GetChatWithEquals extends GetChat {
 
     @Override
+    public int hashCode() {
+        return Objects.hash(this.getChatId());
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;

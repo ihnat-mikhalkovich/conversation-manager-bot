@@ -17,11 +17,6 @@ import static com.conversation.manager.bot.telegram.command.extractor.impl.Comma
 @RequiredArgsConstructor
 public class UnrecognizedCommand extends AbstractBotCommand {
 
-    private final String template = "I can't recognize the command '"
-            + FIRST_SYMBOL
-            + "%s"
-            + "'. Could you try again?";
-
     private final CommandPartExtractor commandPartExtractor;
 
     @Override
@@ -33,6 +28,10 @@ public class UnrecognizedCommand extends AbstractBotCommand {
     private String getResultMessage(Update update) {
         final String text = update.getMessage().getText();
         final Optional<String> command = commandPartExtractor.extract(text);
+        final String template = "I can't recognize the command '"
+                + FIRST_SYMBOL
+                + "%s"
+                + "'. Could you try again?";
         return String.format(template,
                 command.orElseThrow(() -> new IllegalArgumentException("Null in message or text.")));
     }

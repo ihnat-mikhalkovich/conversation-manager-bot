@@ -10,10 +10,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Component
 public class NoCommand extends AbstractBotCommand {
 
-    private final String text = "Currently, I can't deal with user free text yet.";
-
     @Override
     protected BotApiMethod<?> process(Long chatId, Update update) {
+        final String text = "Currently, I can't deal with user free text yet.";
         return new SendMessage(chatId, text);
     }
 

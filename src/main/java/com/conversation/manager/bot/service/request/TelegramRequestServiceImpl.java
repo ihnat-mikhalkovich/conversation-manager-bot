@@ -5,7 +5,6 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.ExportChatInviteLink;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChat;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
@@ -42,16 +41,7 @@ public class TelegramRequestServiceImpl implements TelegramRequestService {
     @Override
     public Optional<Chat> getChat(GetChat getChat) {
         try {
-            Chat chat = telegramBotService.execute(getChat);
-            if (StringUtils.isEmpty(chat.getInviteLink())) {
-                final ExportChatInviteLink exportChatInviteLink = new ExportChatInviteLink();
-                exportChatInviteLink.setChatId(getChat.getChatId());
-                final String link = this.exposeLink(exportChatInviteLink);
-                if (StringUtils.isEmpty(link)) {
-                    return Optional.empty();
-                }
-                chat = telegramBotService.execute(getChat);
-            }
+            final Chat chat = telegramBotService.execute(getChat);
             return Optional.of(chat);
         } catch (TelegramApiException e) {
             return Optional.empty();

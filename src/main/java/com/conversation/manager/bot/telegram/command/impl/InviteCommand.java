@@ -2,7 +2,7 @@ package com.conversation.manager.bot.telegram.command.impl;
 
 import com.conversation.manager.bot.entity.Group;
 import com.conversation.manager.bot.entity.User;
-import com.conversation.manager.bot.service.prepare.PrepareRequestService;
+import com.conversation.manager.bot.service.prepare.PreparedRequestService;
 import com.conversation.manager.bot.telegram.command.AbstractBotCommand;
 import com.conversation.manager.bot.telegram.command.BotCommandType;
 import lombok.Getter;
@@ -24,11 +24,11 @@ import java.util.stream.Collectors;
 @Getter
 public class InviteCommand extends AbstractBotCommand {
 
-    private PrepareRequestService prepareRequestService;
+    private PreparedRequestService preparedRequestService;
 
     @Autowired
-    public void setPrepareRequestService(PrepareRequestService prepareRequestService) {
-        this.prepareRequestService = prepareRequestService;
+    public void setPreparedRequestService(PreparedRequestService preparedRequestService) {
+        this.preparedRequestService = preparedRequestService;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class InviteCommand extends AbstractBotCommand {
         final User user = users.iterator().next();
         final Set<Group> groups = user.getGroups();
 
-        final Set<Chat> chats = prepareRequestService.findChats(groups);
+        final Set<Chat> chats = preparedRequestService.findChats(groups);
 
         final Pair<Set<Chat>, Set<Chat>> unbanedAndBaned = this.separateOnUnbanedAndBaned(chats, userId);
 
@@ -74,7 +74,7 @@ public class InviteCommand extends AbstractBotCommand {
         final Set<Chat> unbaned = new HashSet<>();
         final Set<Chat> baned = new HashSet<>();
         for (Chat chat : chats) {
-            final boolean unban = prepareRequestService.unban(chat.getId(), userId);
+            final boolean unban = preparedRequestService.unban(chat.getId(), userId);
             if (unban) {
                 unbaned.add(chat);
             } else {

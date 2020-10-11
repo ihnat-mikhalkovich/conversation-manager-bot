@@ -4,7 +4,7 @@ import java.util.Optional;
 
 public abstract class AbstractMessagePartExtractor implements MessagePartExtractor {
 
-    public static String WORD_DELIMITER = " ";
+    public static final String WORD_DELIMITER = " ";
 
     @Override
     public Optional<String> extract(String text) {
