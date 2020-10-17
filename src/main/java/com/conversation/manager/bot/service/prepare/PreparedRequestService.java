@@ -11,19 +11,21 @@ public interface PreparedRequestService {
 
     default Set<Chat> findChats(Set<Group> groups) {
         return groups.stream()
-                .map(this::findChats)
+                .map(this::findChat)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
     }
 
-    default Optional<Chat> findChats(Group group) {
-        return this.findChats(group.getGroupId());
+    default Optional<Chat> findChat(Group group) {
+        return this.findChat(group.getGroupId());
     }
 
-    Optional<Chat> findChats(Long groupId);
+    Optional<Chat> findChat(Long groupId);
 
     Set<Group> findGroupsByUserId(Integer userId);
 
     boolean unban(Long chatId, Integer userId);
+
+    boolean kickFromChat(Long chatId, Integer userId);
 }

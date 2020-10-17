@@ -34,7 +34,12 @@ public abstract class AbstractBotCommand implements BotCommand {
 
     @Override
     public BotApiMethod<?> execute(Update update) {
-        final Long chatId = update.getMessage().getChatId();
+        final Long chatId;
+        if (update.hasMessage()) {
+            chatId = update.getMessage().getChatId();
+        } else {
+            chatId = -1L;
+        }
         return process(chatId, update);
     }
 

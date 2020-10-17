@@ -3,17 +3,11 @@ package com.conversation.manager.bot.service.prepare;
 import com.conversation.manager.bot.entity.Group;
 import com.conversation.manager.bot.repository.GroupRepository;
 import com.conversation.manager.bot.service.request.TelegramRequestService;
-import com.conversation.manager.bot.telegram.method.ExportChatInviteLinkWithEquals;
-import com.conversation.manager.bot.telegram.method.GetChatWithEquals;
-import com.conversation.manager.bot.telegram.method.SaveGetChatMember;
-import com.conversation.manager.bot.telegram.method.UnbanChatMemberWithEquals;
+import com.conversation.manager.bot.telegram.method.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.telegram.telegrambots.meta.api.methods.groupadministration.ExportChatInviteLink;
-import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChat;
-import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
-import org.telegram.telegrambots.meta.api.methods.groupadministration.UnbanChatMember;
+import org.telegram.telegrambots.meta.api.methods.groupadministration.*;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 
 import java.util.HashSet;
@@ -30,7 +24,7 @@ public class PreparedRequestServiceImpl implements PreparedRequestService {
     private final GroupRepository groupRepository;
 
     @Override
-    public Optional<Chat> findChats(Long groupId) {
+    public Optional<Chat> findChat(Long groupId) {
         final GetChat getChat = new GetChatWithEquals();
         getChat.setChatId(groupId);
         Optional<Chat> optChat = telegramRequestService.getChat(getChat);
@@ -78,5 +72,13 @@ public class PreparedRequestServiceImpl implements PreparedRequestService {
         unbanChatMember.setChatId(chatId);
         unbanChatMember.setUserId(userId);
         return telegramRequestService.unbanChatMember(unbanChatMember);
+    }
+
+    @Override
+    public boolean kickFromChat(Long chatId, Integer userId) {
+        final KickChatMember kickChatMember = new KickChatMemberWithEquals();
+        kickChatMember.setChatId(chatId);
+        kickChatMember.setUserId(userId);
+        return telegramRequestService.kickFromChat(kickChatMember);
     }
 }

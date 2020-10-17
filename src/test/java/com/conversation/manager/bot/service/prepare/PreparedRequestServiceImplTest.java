@@ -2,10 +2,7 @@ package com.conversation.manager.bot.service.prepare;
 
 import com.conversation.manager.bot.entity.Group;
 import com.conversation.manager.bot.service.request.TelegramRequestService;
-import com.conversation.manager.bot.telegram.method.ChatWithEquals;
-import com.conversation.manager.bot.telegram.method.ExportChatInviteLinkWithEquals;
-import com.conversation.manager.bot.telegram.method.GetChatWithEquals;
-import com.conversation.manager.bot.telegram.method.SaveGetChatMember;
+import com.conversation.manager.bot.telegram.method.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.util.function.SupplierUtils;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChat;
+import org.telegram.telegrambots.meta.api.methods.groupadministration.KickChatMember;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 
 import java.util.HashSet;
@@ -20,7 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -73,6 +71,7 @@ public class PreparedRequestServiceImplTest {
         final Set<Group> expectedGroups = new HashSet<>();
         expectedGroups.add(SupplierUtils.resolve(() -> {
             final Group group = new Group();
+            group.setId(2L);
             group.setGroupId(201L);
             return group;
         }));
@@ -88,11 +87,13 @@ public class PreparedRequestServiceImplTest {
         final Set<Group> expectedGroups = new HashSet<>();
         expectedGroups.add(SupplierUtils.resolve(() -> {
             final Group group = new Group();
+            group.setId(2L);
             group.setGroupId(201L);
             return group;
         }));
         expectedGroups.add(SupplierUtils.resolve(() -> {
             final Group group = new Group();
+            group.setId(3L);
             group.setGroupId(202L);
             return group;
         }));
@@ -182,5 +183,33 @@ public class PreparedRequestServiceImplTest {
         assertThat(idSet).contains(202L);
         assertThat(idSet).doesNotContain(203L);
         assertThat(idSet).contains(204L);
+    }
+
+    @Test
+    public void kickFromChatPositiveCase() {
+        Long chatId = 100L;
+        Integer userId = 200;
+        final KickChatMember kickChatMember = new KickChatMemberWithEquals();
+        kickChatMember.setUserId(userId);
+        kickChatMember.setChatId(chatId);
+        when(telegramRequestService.kickFromChat(kickChatMember)).thenReturn(true);
+
+        final boolean result = preparedRequestService.kickFromChat(chatId, userId);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void kickFromChatNegativeCase() {
+        Long chatId = 100L;
+        Integer userId = 200;
+        final KickChatMember kickChatMember = new KickChatMemberWithEquals();
+        kickChatMember.setUserId(userId);
+        kickChatMember.setChatId(chatId);
+        when(telegramRequestService.kickFromChat(kickChatMember)).thenReturn(false);
+
+        final boolean result = preparedRequestService.kickFromChat(chatId, userId);
+
+        assertThat(result).isFalse();
     }
 }

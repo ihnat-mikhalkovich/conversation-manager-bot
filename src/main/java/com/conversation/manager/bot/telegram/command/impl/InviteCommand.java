@@ -5,18 +5,18 @@ import com.conversation.manager.bot.entity.User;
 import com.conversation.manager.bot.service.prepare.PreparedRequestService;
 import com.conversation.manager.bot.telegram.command.AbstractBotCommand;
 import com.conversation.manager.bot.telegram.command.BotCommandType;
+import com.conversation.manager.bot.util.StringUtil;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.HashSet;
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,40 +34,41 @@ public class InviteCommand extends AbstractBotCommand {
     @Override
     protected BotApiMethod<?> process(Long userChatId, Update update) {
         final Integer userId = userChatId.intValue();
+        final String hash = keyPartRecognizer.recognize(update);
+        final Optional<User> optUser = userRepository.findByUserIdAndHashKey(userId, hash);
 
-        final List<User> users = this.findAppropriateUserList(userId, update);
-        if (users.size() == 0) {
+        if (!optUser.isPresent()) {
             return new SendMessage(userChatId, "I don't know this key word.");
         }
 
-        final User user = users.iterator().next();
+        final User user = optUser.get();
         final Set<Group> groups = user.getGroups();
 
         final Set<Chat> chats = preparedRequestService.findChats(groups);
 
         final Pair<Set<Chat>, Set<Chat>> unbanedAndBaned = this.separateOnUnbanedAndBaned(chats, userId);
 
-        removeGroups(unbanedAndBaned, userId);
+        removeGroups(unbanedAndBaned, user);
 
         final String resultMessage = this.makeResultMessage(unbanedAndBaned);
-        return new SendMessage(userChatId, resultMessage);
+        final SendMessage sendMessage = new SendMessage(userChatId, resultMessage);
+        sendMessage.enableHtml(true);
+        return sendMessage;
     }
 
-    @Transactional
-    private void removeGroups(Pair<Set<Chat>, Set<Chat>> unbanedAndBaned, Integer userId) {
+    private void removeGroups(Pair<Set<Chat>, Set<Chat>> unbanedAndBaned, User user) {
         final Set<Chat> baned = unbanedAndBaned.getSecond();
         if (baned.isEmpty()) {
-            userRepository.deleteById(userId);
+            userRepository.deleteByUserIdAndHashKey(user.getUserId(), user.getHashKey());
             return;
         }
         final Set<Chat> unbaned = unbanedAndBaned.getFirst();
         final Set<Long> unbandedGroupIds = unbaned.stream().map(Chat::getId).collect(Collectors.toSet());
-        final User one = userRepository.getOne(userId);
-        final Set<Group> newUserGroups = one.getGroups().stream()
+        final Set<Group> newUserGroups = user.getGroups().stream()
                 .filter(group -> !unbandedGroupIds.contains(group.getGroupId()))
                 .collect(Collectors.toSet());
-        one.setGroups(newUserGroups);
-        userRepository.saveAndFlush(one);
+        user.setGroups(newUserGroups);
+        userRepository.saveAndFlush(user);
     }
 
     private Pair<Set<Chat>, Set<Chat>> separateOnUnbanedAndBaned(Set<Chat> chats, Integer userId) {
@@ -99,7 +100,7 @@ public class InviteCommand extends AbstractBotCommand {
                         + "</a>";
                 result = result.concat(link).concat(",");
             }
-            result = this.replaceLastCharWithDot(result);
+            result = StringUtil.replaceLastCharWithDot(result);
         }
 
         if (!unbaned.isEmpty() && !baned.isEmpty()) {
@@ -113,18 +114,9 @@ public class InviteCommand extends AbstractBotCommand {
                         .concat(chat.getTitle())
                         .concat(",");
             }
-            result = this.replaceLastCharWithDot(result);
+            result = StringUtil.replaceLastCharWithDot(result);
         }
         return result;
-    }
-
-    private String replaceLastCharWithDot(String str) {
-        return str.substring(0, str.length() - 1).concat(".");
-    }
-
-    private List<User> findAppropriateUserList(Integer userId, Update update) {
-        final String hash = keyPartRecognizer.recognize(update);
-        return userRepository.findByUserIdAndHashKey(userId, hash);
     }
 
     @Override

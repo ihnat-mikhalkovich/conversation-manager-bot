@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -31,6 +32,7 @@ public class TelegramBotService extends TelegramWebhookBot {
     private String botPath;
 
     @Override
+    @Transactional
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         final BotCommandType commandType = commandRecognizer.recognize(update);
         final BotCommand command = botCommandDirector.getCommand(commandType);

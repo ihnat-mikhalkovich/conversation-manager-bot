@@ -6,6 +6,9 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.GenerationType.TABLE;
+
 @Entity
 @Table(name = "TELEGRAM_USER")
 @Data
@@ -16,6 +19,9 @@ import java.util.Set;
 public class User {
 
     @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
+
     @Column(name = "user_id")
     private Integer userId;
 
@@ -25,8 +31,8 @@ public class User {
     @ManyToMany
     @JoinTable(name = "user_group",
             joinColumns =
-            @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            @JoinColumn(name = "telegram_user_id", referencedColumnName = "id"),
             inverseJoinColumns =
-            @JoinColumn(name = "group_id", referencedColumnName = "group_id"))
+            @JoinColumn(name = "telegram_group_id", referencedColumnName = "id"))
     private Set<Group> groups = new HashSet<>();
 }

@@ -17,7 +17,7 @@ public class UserRepositoryTest {
     @Test
     @Transactional
     public void testGetById() {
-        final Optional<User> byId = userRepository.findById(702696623);
+        final Optional<User> byId = userRepository.findByUserIdAndHashKey(702696623, "ee10c315eba2c75b403ea99136f5b48d");
         System.out.println("one: " + byId.get());
     }
 

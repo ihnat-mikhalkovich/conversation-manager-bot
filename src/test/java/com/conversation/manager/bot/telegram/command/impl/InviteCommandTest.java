@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.function.SupplierUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@Transactional
 public class InviteCommandTest {
 
     @Autowired
@@ -58,7 +60,6 @@ public class InviteCommandTest {
     }
 
     @Test
-    @Transactional
     public void inviteToOneGroup() {
         when(update.getMessage().getFrom().getId()).thenReturn(1101);
         when(message.getChatId()).thenReturn(1101L);
@@ -66,6 +67,7 @@ public class InviteCommandTest {
         final Set<Group> groups = new HashSet<>();
         groups.add(SupplierUtils.resolve(() -> {
             final Group group = new Group();
+            group.setId(2L);
             group.setGroupId(201L);
             return group;
         }));
@@ -85,12 +87,11 @@ public class InviteCommandTest {
         assertEquals("Invite links: <a href=\"https://t.me/test-chat-1\">Test chat 1</a>.", text);
 
         final Integer userId = update.getMessage().getFrom().getId();
-        final Optional<User> optUser = userRepository.findById(userId);
+        final Optional<User> optUser = userRepository.findByUserIdAndHashKey(userId, "d41d8cd98f00b204e9800998ecf8427e");
         assertFalse(optUser.isPresent());
     }
 
     @Test
-    @Transactional
     public void checkKeyWord() {
         when(update.getMessage().getFrom().getId()).thenReturn(1101);
         when(message.getChatId()).thenReturn(1101L);
@@ -99,13 +100,9 @@ public class InviteCommandTest {
         final SendMessage sendMessage = (SendMessage) inviteCommand.execute(update);
         final String text = sendMessage.getText();
         assertEquals("I don't know this key word.", text);
-        final Integer userId = update.getMessage().getFrom().getId();
-        final Optional<User> optUser = userRepository.findById(userId);
-        assertTrue(optUser.isPresent());
     }
 
     @Test
-    @Transactional
     public void inviteToTwoGroups() {
         when(update.getMessage().getFrom().getId()).thenReturn(1102);
         when(message.getChatId()).thenReturn(1102L);
@@ -113,11 +110,13 @@ public class InviteCommandTest {
         final Set<Group> groups = new HashSet<>();
         groups.add(SupplierUtils.resolve(() -> {
             final Group group = new Group();
+            group.setId(2L);
             group.setGroupId(201L);
             return group;
         }));
         groups.add(SupplierUtils.resolve(() -> {
             final Group group = new Group();
+            group.setId(3L);
             group.setGroupId(202L);
             return group;
         }));
@@ -146,12 +145,11 @@ public class InviteCommandTest {
                 || "Invite links: <a href=\"https://t.me/test-chat-2\">Test chat 2</a>, <a href=\"https://t.me/test-chat-1\">Test chat 1</a>.".equals(text));
 
         final Integer userId = update.getMessage().getFrom().getId();
-        final Optional<User> optUser = userRepository.findById(userId);
+        final Optional<User> optUser = userRepository.findByUserIdAndHashKey(userId, "5f4dcc3b5aa765d61d8327deb882cf99");
         assertFalse(optUser.isPresent());
     }
 
     @Test
-    @Transactional
     public void checkUnBan() {
         when(update.getMessage().getFrom().getId()).thenReturn(1101);
         when(message.getChatId()).thenReturn(1101L);
@@ -159,6 +157,7 @@ public class InviteCommandTest {
         final Set<Group> groups = new HashSet<>();
         groups.add(SupplierUtils.resolve(() -> {
             final Group group = new Group();
+            group.setId(2L);
             group.setGroupId(201L);
             return group;
         }));
@@ -177,12 +176,11 @@ public class InviteCommandTest {
         final String text = sendMessage.getText();
         assertEquals("I can't unban: Test chat 1.", text);
         final Integer userId = update.getMessage().getFrom().getId();
-        final Optional<User> optUser = userRepository.findById(userId);
+        final Optional<User> optUser = userRepository.findByUserIdAndHashKey(userId, DigestUtils.md5DigestAsHex("".getBytes()));
         assertTrue(optUser.isPresent());
     }
 
     @Test
-    @Transactional
     public void checkUnBanWithTwoGroups() {
         when(update.getMessage().getFrom().getId()).thenReturn(1102);
         when(message.getChatId()).thenReturn(1102L);
@@ -190,11 +188,13 @@ public class InviteCommandTest {
         final Set<Group> groups = new HashSet<>();
         groups.add(SupplierUtils.resolve(() -> {
             final Group group = new Group();
+            group.setId(2L);
             group.setGroupId(201L);
             return group;
         }));
         groups.add(SupplierUtils.resolve(() -> {
             final Group group = new Group();
+            group.setId(3L);
             group.setGroupId(202L);
             return group;
         }));
@@ -222,7 +222,7 @@ public class InviteCommandTest {
         assertEquals("Invite links: <a href=\"https://t.me/test-chat-2\">Test chat 2</a>.\n" +
                 "I can't unban: Test chat 1.", text);
         final Integer userId = update.getMessage().getFrom().getId();
-        final Optional<User> optUser = userRepository.findById(userId);
+        final Optional<User> optUser = userRepository.findByUserIdAndHashKey(userId, "5f4dcc3b5aa765d61d8327deb882cf99");
         assertTrue(optUser.isPresent());
     }
 }

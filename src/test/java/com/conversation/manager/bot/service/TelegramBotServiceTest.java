@@ -11,15 +11,18 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.function.SupplierUtils;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -57,6 +60,11 @@ public class TelegramBotServiceTest {
         when(update.getMessage().getFrom().getId()).thenReturn(1);
         when(message.getChatId()).thenReturn(1L);
         when(message.hasText()).thenReturn(true);
+
+        final Chat chatMock = mock(Chat.class);
+        when(chatMock.isUserChat()).thenReturn(true);
+
+        when(update.getMessage().getChat()).thenReturn(chatMock);
     }
 
     @Test
@@ -105,7 +113,7 @@ public class TelegramBotServiceTest {
         when(message.getChatId()).thenReturn(5L);
         final SendMessage sendMessage = (SendMessage) telegramWebhookBot.onWebhookUpdateReceived(update);
         final String text = sendMessage.getText();
-        assertEquals("Have successfully removed.", text);
+        assertEquals("I haven't got something to remove.", text);
         assertEquals("5", sendMessage.getChatId());
     }
 
@@ -117,6 +125,7 @@ public class TelegramBotServiceTest {
         final Set<Group> groups = new HashSet<>();
         groups.add(SupplierUtils.resolve(() -> {
             final Group group = new Group();
+            group.setId(2L);
             group.setGroupId(201L);
             return group;
         }));
@@ -136,12 +145,14 @@ public class TelegramBotServiceTest {
         assertEquals("1101", sendMessage.getChatId());
     }
 
-    /*
+    @Test
+    public void doNothing() {
+        final Update updateMock = mock(Update.class);
+        when(updateMock.getMessage()).thenReturn(null);
+        when(updateMock.hasMessage()).thenReturn(false);
 
-    /start
-    /help
-    /remove
-    /invite
+        final BotApiMethod<?> botApiMethod = telegramWebhookBot.onWebhookUpdateReceived(updateMock);
 
-     */
+        assertNull(botApiMethod);
+    }
 }

@@ -5,10 +5,7 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.groupadministration.ExportChatInviteLink;
-import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChat;
-import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
-import org.telegram.telegrambots.meta.api.methods.groupadministration.UnbanChatMember;
+import org.telegram.telegrambots.meta.api.methods.groupadministration.*;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.ChatMember;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -32,7 +29,12 @@ public class TelegramRequestServiceImpl implements TelegramRequestService {
     public boolean existChatMember(GetChatMember getChatMember) {
         try {
             final ChatMember member = telegramBotService.execute(getChatMember);
-            return Objects.nonNull(member.getUser());
+            if (Objects.isNull(member.getUser())) {
+                return false;
+            }
+            final boolean isLeft = "left".equals(member.getStatus());
+            final boolean isKicked = "kicked".equals(member.getStatus());
+            return !isLeft && !isKicked;
         } catch (TelegramApiException e) {
             return false;
         }
@@ -63,6 +65,15 @@ public class TelegramRequestServiceImpl implements TelegramRequestService {
             return telegramBotService.execute(exportChatInviteLink);
         } catch (TelegramApiException e) {
             return "";
+        }
+    }
+
+    @Override
+    public boolean kickFromChat(KickChatMember kickChatMember) {
+        try {
+            return telegramBotService.execute(kickChatMember);
+        } catch (TelegramApiException e) {
+            return false;
         }
     }
 }
