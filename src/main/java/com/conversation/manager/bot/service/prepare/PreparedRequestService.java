@@ -2,6 +2,7 @@ package com.conversation.manager.bot.service.prepare;
 
 import com.conversation.manager.bot.entity.Group;
 import org.telegram.telegrambots.meta.api.objects.Chat;
+import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.Optional;
 import java.util.Set;
@@ -28,4 +29,8 @@ public interface PreparedRequestService {
     boolean unban(Long chatId, Integer userId);
 
     boolean kickFromChat(Long chatId, Integer userId);
+
+    boolean leaveChat(Long chatId);
+
+    Optional<Message> sendMessage(Long chatId, String text);
 }

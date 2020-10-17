@@ -19,15 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Component
-@Getter
 public class RemoveCommand extends AbstractBotCommand {
-
-    protected PreparedRequestService preparedRequestService;
-
-    @Autowired
-    public void setPreparedRequestService(PreparedRequestService preparedRequestService) {
-        this.preparedRequestService = preparedRequestService;
-    }
 
     @Override
     protected BotApiMethod<?> process(Long userChatId, Update update) {

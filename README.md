@@ -19,19 +19,4 @@ CREATE TABLE telegram_user (
    telegram_group_id bigint REFERENCES telegram_group (id) ON UPDATE CASCADE, 
    CONSTRAINT user_group_pkey PRIMARY KEY (telegram_user_id, telegram_group_id)  -- explicit pk
  );
-
-INSERT INTO
-    telegram_user
-VALUES
-  (1, 702696623, 'ee10c315eba2c75b403ea99136f5b48d');
-  
-INSERT INTO
-    telegram_group
-VALUES
-  (1, -1001246979812);
-  
-INSERT INTO
-	user_group
-VALUES
-	(1, 1);
 </code>

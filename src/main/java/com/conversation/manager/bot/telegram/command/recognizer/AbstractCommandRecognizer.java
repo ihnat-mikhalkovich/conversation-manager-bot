@@ -11,7 +11,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -31,12 +30,10 @@ public abstract class AbstractCommandRecognizer implements CommandRecognizer {
         }
 
         final Message message = update.getMessage();
-        if (Optional.ofNullable(message.getMigrateToChatId()).orElse(0L) != 0) {
-            return BotCommandType.GROUP_MIGRATE_TO_SUPERGROUP;
-        }
-
-        if (Optional.ofNullable(message.getGroupchatCreated()).orElse(false)) {
-            return BotCommandType.GROUP_CREATED_WITH_BOT;
+        final Boolean isSupergroup = Optional.ofNullable(message.getChat().isSuperGroupChat()).orElse(false);
+        final Boolean isUserChat = Optional.ofNullable(message.getChat().isUserChat()).orElse(false);
+        if (!isSupergroup && !isUserChat) {
+            return BotCommandType.CHAT_IS_NOT_SUPERGROUP;
         }
 
         final List<User> newChatMembers = message.getNewChatMembers();
@@ -46,7 +43,7 @@ public abstract class AbstractCommandRecognizer implements CommandRecognizer {
                 .findFirst();
 
         if (optBot.isPresent()) {
-            return BotCommandType.BOT_ADDED_TO_GROUP;
+            return BotCommandType.BOT_ADDED_TO_SUPERGROUP;
         }
 
         if (!message.hasText() || !message.getChat().isUserChat()) {

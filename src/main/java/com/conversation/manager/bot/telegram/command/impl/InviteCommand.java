@@ -21,15 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-@Getter
 public class InviteCommand extends AbstractBotCommand {
-
-    private PreparedRequestService preparedRequestService;
-
-    @Autowired
-    public void setPreparedRequestService(PreparedRequestService preparedRequestService) {
-        this.preparedRequestService = preparedRequestService;
-    }
 
     @Override
     protected BotApiMethod<?> process(Long userChatId, Update update) {

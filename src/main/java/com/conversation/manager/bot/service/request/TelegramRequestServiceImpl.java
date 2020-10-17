@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.*;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.ChatMember;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Objects;
@@ -74,6 +76,25 @@ public class TelegramRequestServiceImpl implements TelegramRequestService {
             return telegramBotService.execute(kickChatMember);
         } catch (TelegramApiException e) {
             return false;
+        }
+    }
+
+    @Override
+    public boolean leave(LeaveChat leaveChat) {
+        try {
+            return telegramBotService.execute(leaveChat);
+        } catch (TelegramApiException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public Optional<Message> sendMessage(SendMessage sendMessage) {
+        try {
+            final Message message = telegramBotService.execute(sendMessage);
+            return Optional.of(message);
+        } catch (TelegramApiException e) {
+            return Optional.empty();
         }
     }
 }

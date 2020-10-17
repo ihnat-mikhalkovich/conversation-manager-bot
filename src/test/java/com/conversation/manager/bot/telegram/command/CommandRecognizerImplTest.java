@@ -71,9 +71,13 @@ class CommandRecognizerImplTest {
     public void testDoNothingCommandWhenHasNotText() {
         final Update updateMock = mock(Update.class);
 
+        final Chat chatMock = mock(Chat.class);
+        when(chatMock.isSuperGroupChat()).thenReturn(true);
+
         final Message messageMock = mock(Message.class);
         when(messageMock.hasText()).thenReturn(false);
         when(messageMock.getText()).thenReturn(null);
+        when(messageMock.getChat()).thenReturn(chatMock);
 
         when(updateMock.getMessage()).thenReturn(messageMock);
         when(updateMock.hasMessage()).thenReturn(true);
@@ -89,9 +93,13 @@ class CommandRecognizerImplTest {
         when(userMock.getUserName()).thenReturn("test-bot");
         commandRecognizer.setBotUsername("test-bot");
 
+        final Chat chatMock = mock(Chat.class);
+        when(chatMock.isSuperGroupChat()).thenReturn(true);
+
         final Message messageMock = mock(Message.class);
         final List<User> users = Collections.singletonList(userMock);
         when(messageMock.getNewChatMembers()).thenReturn(users);
+        when(messageMock.getChat()).thenReturn(chatMock);
 
         final Update updateMock = mock(Update.class);
         when(updateMock.hasMessage()).thenReturn(true);
@@ -99,7 +107,7 @@ class CommandRecognizerImplTest {
 
         final BotCommandType type = commandRecognizer.recognize(updateMock);
 
-        assertEquals(BotCommandType.BOT_ADDED_TO_GROUP, type);
+        assertEquals(BotCommandType.BOT_ADDED_TO_SUPERGROUP, type);
     }
 
     @Test
@@ -113,6 +121,7 @@ class CommandRecognizerImplTest {
 
         final Chat chatMock = mock(Chat.class);
         when(chatMock.isUserChat()).thenReturn(false);
+        when(chatMock.isSuperGroupChat()).thenReturn(true);
 
         when(updateMock.getMessage().getChat()).thenReturn(chatMock);
         when(updateMock.hasMessage()).thenReturn(true);
@@ -122,28 +131,19 @@ class CommandRecognizerImplTest {
     }
 
     @Test
-    public void migrateFromGroupToSupergroupMessage() {
+    public void botAddedToChatThatIsNotSupergroup() {
         final Update updateMock = mock(Update.class);
         final Message messageMock = mock(Message.class);
 
-        when(updateMock.hasMessage()).thenReturn(true);
-        when(updateMock.getMessage()).thenReturn(messageMock);
-        when(messageMock.getMigrateToChatId()).thenReturn(1101L);
-
-        final BotCommandType type = commandRecognizer.recognize(updateMock);
-        assertEquals(BotCommandType.GROUP_MIGRATE_TO_SUPERGROUP, type);
-    }
-
-    @Test
-    public void groupCreatedWithBotTest() {
-        final Update updateMock = mock(Update.class);
-        final Message messageMock = mock(Message.class);
+        final Chat chatMock = mock(Chat.class);
+        when(chatMock.isSuperGroupChat()).thenReturn(false);
 
         when(updateMock.hasMessage()).thenReturn(true);
         when(updateMock.getMessage()).thenReturn(messageMock);
-        when(messageMock.getGroupchatCreated()).thenReturn(true);
+
+        when(messageMock.getChat()).thenReturn(chatMock);
 
         final BotCommandType type = commandRecognizer.recognize(updateMock);
-        assertEquals(BotCommandType.GROUP_CREATED_WITH_BOT, type);
+        assertEquals(BotCommandType.CHAT_IS_NOT_SUPERGROUP, type);
     }
 }
