@@ -19,6 +19,11 @@ cloud:
     ping-google-cron: 0 0 */6 ? * *
 
 spring:
+  security:
+    user:
+      name: ${SECURITY_USER_NAME:admin}
+      password: ${SECURITY_USER_PASSWORD:root}
+      roles: admin
   datasource:
     hikari:
       connectionTimeout: 20000

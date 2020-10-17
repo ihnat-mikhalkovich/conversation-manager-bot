@@ -38,6 +38,9 @@ dependencies {
 	testImplementation("com.h2database:h2")
 
 	implementation group: 'org.postgresql', name: 'postgresql'
+
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security:spring-security-test'
 }
 
 test {
