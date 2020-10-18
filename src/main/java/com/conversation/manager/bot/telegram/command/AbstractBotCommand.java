@@ -3,6 +3,7 @@ package com.conversation.manager.bot.telegram.command;
 import com.conversation.manager.bot.repository.GroupRepository;
 import com.conversation.manager.bot.repository.UserRepository;
 import com.conversation.manager.bot.service.prepare.PreparedRequestService;
+import com.conversation.manager.bot.util.bundle.ResourceBundleMessageSourceManager;
 import com.conversation.manager.bot.util.key.KeyPartRecognizer;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ public abstract class AbstractBotCommand implements BotCommand {
     protected KeyPartRecognizer keyPartRecognizer;
 
     protected PreparedRequestService preparedRequestService;
+
+    protected ResourceBundleMessageSourceManager bundleMessageSourceManager;
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -38,6 +41,11 @@ public abstract class AbstractBotCommand implements BotCommand {
     @Autowired
     public void setPreparedRequestService(PreparedRequestService preparedRequestService) {
         this.preparedRequestService = preparedRequestService;
+    }
+
+    @Autowired
+    public void setBundleMessageSourceManager(ResourceBundleMessageSourceManager bundleMessageSourceManager) {
+        this.bundleMessageSourceManager = bundleMessageSourceManager;
     }
 
     @Override

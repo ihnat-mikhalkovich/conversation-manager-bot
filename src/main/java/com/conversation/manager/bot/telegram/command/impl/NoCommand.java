@@ -12,8 +12,8 @@ public class NoCommand extends AbstractBotCommand {
 
     @Override
     protected BotApiMethod<?> process(Long chatId, Update update) {
-        final String text = "I haven't been able to answer on not command message. More details: /help";
-        return new SendMessage(chatId, text);
+        final String message = bundleMessageSourceManager.findMessage(update, "command.no");
+        return new SendMessage(chatId, message);
     }
 
     @Override

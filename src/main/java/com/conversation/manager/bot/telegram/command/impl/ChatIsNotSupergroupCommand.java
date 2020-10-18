@@ -22,14 +22,14 @@ public class ChatIsNotSupergroupCommand extends AbstractBotCommand {
 
     @Override
     protected BotApiMethod<?> process(Long chatId, Update update) {
-        final String text = "Currently, I can't deal with chats in 'group' status. Please, promote the chat to 'supergroup' and after add me to the chat.";
+        final String text = bundleMessageSourceManager.findMessage(update, "command.chat-id-not-supergroup");
         preparedRequestService.sendMessage(chatId, text);
         final boolean isSuccess = preparedRequestService.leaveChat(chatId);
 
         if (isSuccess) {
             return doNothingCommand.process(chatId, update);
         } else {
-            final String newText = "Please, remove me from this chat and add again.";
+            final String newText = bundleMessageSourceManager.findMessage(update, "command.chat-id-not-supergroup.is-not-success");
             return new SendMessage(chatId, newText);
         }
     }

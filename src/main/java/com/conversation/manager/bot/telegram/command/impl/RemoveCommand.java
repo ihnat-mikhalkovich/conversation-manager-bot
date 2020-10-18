@@ -30,7 +30,8 @@ public class RemoveCommand extends AbstractBotCommand {
         user.setHashKey(keyPartRecognizer.recognize(update));
         final Set<Group> userGroups = preparedRequestService.findGroupsByUserId(userId);
 
-        final StringBuilder positiveSection = new StringBuilder("Have successfully removed: ");
+        final String message = bundleMessageSourceManager.findMessage(update, "command.remove.part.success");
+        final StringBuilder positiveSection = new StringBuilder(message).append(" ");
         final Iterator<Group> iterator = userGroups.iterator();
         while (iterator.hasNext()) {
             final Group group = iterator.next();
@@ -59,7 +60,8 @@ public class RemoveCommand extends AbstractBotCommand {
             final String positiveResult = StringUtil.replaceLastCharWithDot(positiveSection.toString());
             result.append(positiveResult);
         } else {
-            result.append("I haven't got something to remove.");
+            final String nothingToRemove = bundleMessageSourceManager.findMessage(update, "command.remove.part.nothing-to-remove");
+            result.append(nothingToRemove);
         }
 
         return new SendMessage(userChatId, result.toString());

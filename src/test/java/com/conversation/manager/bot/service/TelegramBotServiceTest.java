@@ -73,7 +73,10 @@ public class TelegramBotServiceTest {
         when(message.getChatId()).thenReturn(1L);
         final SendMessage sendMessage = (SendMessage) telegramWebhookBot.onWebhookUpdateReceived(update);
         final String text = sendMessage.getText();
-        assertEquals("/help - info about commands", text);
+        assertEquals("/help - info about commands \n" +
+                "/start - just greeting \n" +
+                "/remove - the bot will kick you from all 'supergroups' where the bot is administrator\n" +
+                "/invite - it will work only after '/remove'. The bot will provide you invite links for every 'supergroup' where you was removed", text);
         assertEquals("1", sendMessage.getChatId());
     }
 
@@ -83,7 +86,7 @@ public class TelegramBotServiceTest {
         when(message.getChatId()).thenReturn(2L);
         final SendMessage sendMessage = (SendMessage) telegramWebhookBot.onWebhookUpdateReceived(update);
         final String text = sendMessage.getText();
-        assertEquals("Hi nice to meet you. I'm a conversation manager. You can be easily removed from from the group and invited again by me. To more get info, please, enter /help command.", text);
+        assertEquals("Hi, nice to meet you. I'm a conversation manager. You can be easily removed from the 'supergroup' and invited again by me. For more information, please, enter /help command.", text);
         assertEquals("2", sendMessage.getChatId());
     }
 
@@ -103,7 +106,7 @@ public class TelegramBotServiceTest {
         when(message.getChatId()).thenReturn(6L);
         final SendMessage sendMessage = (SendMessage) telegramWebhookBot.onWebhookUpdateReceived(update);
         final String text = sendMessage.getText();
-        assertEquals("Currently, I can't deal with user free text yet.", text);
+        assertEquals("I haven't been able to answer on not command message. More details: /help", text);
         assertEquals("6", sendMessage.getChatId());
     }
 

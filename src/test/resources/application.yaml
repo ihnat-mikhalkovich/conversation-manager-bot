@@ -8,6 +8,11 @@ cloud:
     platform: ${CLOUD_PLATFORM:local}
 
 spring:
+  security:
+    user:
+      name: admin
+      password: root
+      roles: admin
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver

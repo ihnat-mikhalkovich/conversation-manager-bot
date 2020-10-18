@@ -9,11 +9,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Component
 public class StartCommand extends AbstractBotCommand {
 
-    private static final String MESSAGE = "Hi, nice to meet you. I'm a conversation manager. You can be easily removed from the 'supergroup' and invited again by me. For more information, please, enter /help command.";
-
     @Override
     public SendMessage process(Long chatId, Update update) {
-        return new SendMessage(chatId, MESSAGE);
+        final String message = bundleMessageSourceManager.findMessage(update, "command.start");
+        return new SendMessage(chatId, message);
     }
 
     @Override

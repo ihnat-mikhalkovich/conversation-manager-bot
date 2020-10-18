@@ -2,12 +2,9 @@ package com.conversation.manager.bot.telegram.command.impl;
 
 import com.conversation.manager.bot.entity.Group;
 import com.conversation.manager.bot.entity.User;
-import com.conversation.manager.bot.service.prepare.PreparedRequestService;
 import com.conversation.manager.bot.telegram.command.AbstractBotCommand;
 import com.conversation.manager.bot.telegram.command.BotCommandType;
 import com.conversation.manager.bot.util.StringUtil;
-import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -30,7 +27,8 @@ public class InviteCommand extends AbstractBotCommand {
         final Optional<User> optUser = userRepository.findByUserIdAndHashKey(userId, hash);
 
         if (!optUser.isPresent()) {
-            return new SendMessage(userChatId, "I don't know this key word.");
+            final String message = bundleMessageSourceManager.findMessage(update, "command.invite.bad-key-word");
+            return new SendMessage(userChatId, message);
         }
 
         final User user = optUser.get();
@@ -42,7 +40,7 @@ public class InviteCommand extends AbstractBotCommand {
 
         removeGroups(unbanedAndBaned, user);
 
-        final String resultMessage = this.makeResultMessage(unbanedAndBaned);
+        final String resultMessage = this.makeResultMessage(unbanedAndBaned, update);
         final SendMessage sendMessage = new SendMessage(userChatId, resultMessage);
         sendMessage.enableHtml(true);
         return sendMessage;
@@ -77,13 +75,13 @@ public class InviteCommand extends AbstractBotCommand {
         return Pair.of(unbaned, baned);
     }
 
-    private String makeResultMessage(Pair<Set<Chat>, Set<Chat>> unbanedAndBaned) {
+    private String makeResultMessage(Pair<Set<Chat>, Set<Chat>> unbanedAndBaned, Update update) {
         final Set<Chat> unbaned = unbanedAndBaned.getFirst();
         final Set<Chat> baned = unbanedAndBaned.getSecond();
 
         String result = "";
         if (!unbaned.isEmpty()) {
-            result = "Invite links:";
+            result = bundleMessageSourceManager.findMessage(update, "command.invite.part.links");
             for (Chat chat : unbaned) {
                 final String link = " <a href=\""
                         + chat.getInviteLink()
@@ -100,7 +98,8 @@ public class InviteCommand extends AbstractBotCommand {
         }
 
         if (!baned.isEmpty()) {
-            result = result + "I can't unban:";
+            final String message = bundleMessageSourceManager.findMessage(update, "command.invite.part.can-not-unban");
+            result = result + message;
             for (Chat chat : baned) {
                 result = result.concat(" ")
                         .concat(chat.getTitle())

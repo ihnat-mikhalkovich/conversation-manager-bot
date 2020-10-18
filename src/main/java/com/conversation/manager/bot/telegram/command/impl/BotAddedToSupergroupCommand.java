@@ -18,10 +18,8 @@ public class BotAddedToSupergroupCommand extends AbstractBotCommand {
         final Group group = new Group();
         group.setGroupId(chatId);
         groupRepository.saveAndFlush(group);
-        final SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(chatId);
-        sendMessage.setText("Feel free to contact me in a personal.");
-        return sendMessage;
+        final String message = bundleMessageSourceManager.findMessage(update, "command.bot-added-to-supergroup");
+        return new SendMessage(chatId, message);
     }
 
     @Override

@@ -28,12 +28,9 @@ public class UnrecognizedCommand extends AbstractBotCommand {
     private String getResultMessage(Update update) {
         final String text = update.getMessage().getText();
         final Optional<String> command = commandPartExtractor.extract(text);
-        final String template = "I can't recognize the command '"
-                + "%s"
-                + "'. Could you try again?";
         final String typedCommand = command.orElseThrow(() -> new IllegalArgumentException("Null in message or text."));
-        return String.format(template,
-                FIRST_SYMBOL + typedCommand);
+        final Object[] args = {FIRST_SYMBOL + typedCommand};
+        return bundleMessageSourceManager.findMessage(update, "command.unrecognized", args);
     }
 
     @Override
