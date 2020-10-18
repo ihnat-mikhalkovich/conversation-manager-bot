@@ -12,7 +12,7 @@ public class NoCommand extends AbstractBotCommand {
 
     @Override
     protected BotApiMethod<?> process(Long chatId, Update update) {
-        final String text = "Currently, I can't deal with user free text yet.";
+        final String text = "I haven't been able to answer on not command message. More details: /help";
         return new SendMessage(chatId, text);
     }
 

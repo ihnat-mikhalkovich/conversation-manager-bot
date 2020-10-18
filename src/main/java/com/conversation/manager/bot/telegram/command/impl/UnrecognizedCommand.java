@@ -29,11 +29,11 @@ public class UnrecognizedCommand extends AbstractBotCommand {
         final String text = update.getMessage().getText();
         final Optional<String> command = commandPartExtractor.extract(text);
         final String template = "I can't recognize the command '"
-                + FIRST_SYMBOL
                 + "%s"
                 + "'. Could you try again?";
+        final String typedCommand = command.orElseThrow(() -> new IllegalArgumentException("Null in message or text."));
         return String.format(template,
-                command.orElseThrow(() -> new IllegalArgumentException("Null in message or text.")));
+                FIRST_SYMBOL + typedCommand);
     }
 
     @Override

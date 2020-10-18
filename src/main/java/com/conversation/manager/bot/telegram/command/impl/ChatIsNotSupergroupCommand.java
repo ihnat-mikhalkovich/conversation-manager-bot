@@ -22,7 +22,7 @@ public class ChatIsNotSupergroupCommand extends AbstractBotCommand {
 
     @Override
     protected BotApiMethod<?> process(Long chatId, Update update) {
-        final String text = "Currently, I can't deal with chats in 'group' status. Please, promote the chat to 'supergroup'.";
+        final String text = "Currently, I can't deal with chats in 'group' status. Please, promote the chat to 'supergroup' and after add me to the chat.";
         preparedRequestService.sendMessage(chatId, text);
         final boolean isSuccess = preparedRequestService.leaveChat(chatId);
 

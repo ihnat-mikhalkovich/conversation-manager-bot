@@ -20,7 +20,7 @@ public class BotAddedToSupergroupCommand extends AbstractBotCommand {
         groupRepository.saveAndFlush(group);
         final SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
-        sendMessage.setText("Feel free to contact me.");
+        sendMessage.setText("Feel free to contact me in a personal.");
         return sendMessage;
     }
 

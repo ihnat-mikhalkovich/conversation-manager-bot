@@ -9,7 +9,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Component
 public class HelpCommand extends AbstractBotCommand {
 
-    private static final String MESSAGE = "/help - info about commands";
+    private static final String MESSAGE = "/help - info about commands \n" +
+            "/start - just greeting \n" +
+            "/remove - the bot will kick you from all 'supergroups' where the bot is administrator\n" +
+            "/invite - it will work only after '/remove'. The bot will provide you invite links for every 'supergroup' where you was removed";
 
     @Override
     public SendMessage process(Long chatId, Update update) {
